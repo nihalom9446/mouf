@@ -1,0 +1,82 @@
+# ==============================================================================
+# Robots.txt for Mouf Media (https://moufmedia.com)
+# Configured for standard search engines & AI/LLM crawlers (GEO Optimized)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. GENERAL SEARCH ENGINES (Google, Bing, Yahoo, DuckDuckGo, Yandex)
+# ------------------------------------------------------------------------------
+User-agent: *
+Allow: /
+Allow: /about.html
+Allow: /rental.html
+Allow: /sales.html
+Allow: /projects.html
+Allow: /contact.html
+Allow: /images/
+Allow: /aseets/
+Allow: /styles.css
+Allow: /script.js
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+# Disallow administrative dashboard and backend API endpoints
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /admin.css
+Disallow: /api/
+Disallow: /.env
+
+# ------------------------------------------------------------------------------
+# 2. AI SEARCH ENGINES & LLM CRAWLERS (ChatGPT, Gemini, Perplexity, Claude, Apple)
+# ------------------------------------------------------------------------------
+User-agent: GPTBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: ChatGPT-User
+Allow: /
+Allow: /llms.txt
+
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: ClaudeBot
+Allow: /
+Allow: /llms.txt
+
+User-agent: anthropic-ai
+Allow: /
+Allow: /llms.txt
+
+User-agent: Applebot
+Allow: /
+Allow: /llms.txt
+
+User-agent: Applebot-Extended
+Allow: /
+Allow: /llms.txt
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+# ------------------------------------------------------------------------------
+# 3. SITEMAPS & AI KNOWLEDGE DIRECTIVES
+# ------------------------------------------------------------------------------
+Sitemap: https://moufmedia.com/sitemap.xml
+# AI Knowledge Manifest: https://moufmedia.com/llms.txt
+

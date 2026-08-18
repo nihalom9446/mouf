@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://moufmedia.com/</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://moufmedia.com/aseets/logo.png</image:loc>
+            <image:title>Mouf Media - LED Video Wall Solutions</image:title>
+        </image:image>
+    </url>
+
+    <!-- LED Wall Rental -->
+    <url>
+        <loc>https://moufmedia.com/rental.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://moufmedia.com/images/rental_hero_stage.png</image:loc>
+            <image:title>LED Video Wall Rental and Pricing Calculator</image:title>
+        </image:image>
+    </url>
+
+    <!-- LED Wall Sales -->
+    <url>
+        <loc>https://moufmedia.com/sales.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://moufmedia.com/images/sales_hero_product.png</image:loc>
+            <image:title>LED Video Wall Sales, Cabinets and Display Modules</image:title>
+        </image:image>
+    </url>
+
+    <!-- Projects Portfolio -->
+    <url>
+        <loc>https://moufmedia.com/projects.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://moufmedia.com/images/concert_event_1786554949165.png</image:loc>
+            <image:title>Mouf Media Concert and Event Projects</image:title>
+        </image:image>
+    </url>
+
+    <!-- About Us -->
+    <url>
+        <loc>https://moufmedia.com/about.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://moufmedia.com/images/about%20us%20hero.png</image:loc>
+            <image:title>About Mouf Media Team and Expertise</image:title>
+        </image:image>
+    </url>
+
+    <!-- Contact Page -->
+    <url>
+        <loc>https://moufmedia.com/contact.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+</urlset>

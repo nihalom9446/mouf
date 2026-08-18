@@ -1,0 +1,50 @@
+[
+  {
+    "id": "PRJ-989581",
+    "title": "vcnbmbm",
+    "category": "CONCERTS & FESTIVALS",
+    "venue": "vb",
+    "image": "images/uploads/upload_1787067989569_823ba997.png",
+    "createdAt": "2026-08-18T15:46:29.581Z"
+  },
+  {
+    "id": "PRJ-1",
+    "title": "Mega Concert Stage Setup",
+    "category": "CONCERTS & FESTIVALS",
+    "venue": "Calicut Beach Open Grounds",
+    "image": "images/concert_event_1786554949165.png",
+    "createdAt": "2026-08-18T15:29:49.916Z"
+  },
+  {
+    "id": "PRJ-2",
+    "title": "Arena Visual Production",
+    "category": "LIVE EVENTS",
+    "venue": "Indoor Stadium Arena",
+    "image": "images/project_hero_stage.png",
+    "createdAt": "2026-08-18T15:29:49.923Z"
+  },
+  {
+    "id": "PRJ-3",
+    "title": "Indoor Curved Display Wall",
+    "category": "AUDITORIUMS",
+    "venue": "University Grand Auditorium",
+    "image": "images/rental_hero_stage.png",
+    "createdAt": "2026-08-18T15:29:49.923Z"
+  },
+  {
+    "id": "PRJ-5",
+    "title": "Royal Wedding Stage Backdrop",
+    "category": "WEDDINGS",
+    "venue": "The Gateway Hotel, Beach Road",
+    "image": "images/wedding_event_1786554814381.png",
+    "createdAt": "2026-08-18T15:29:49.923Z"
+  },
+  {
+    "id": "PRJ-6",
+    "title": "Stadium Live Screening",
+    "category": "OUTDOOR & SPORTS",
+    "venue": "Corporation Stadium Ground",
+    "image": "images/sports_event_1786554964693.png",
+    "createdAt": "2026-08-18T15:29:49.923Z"
+  }
+]

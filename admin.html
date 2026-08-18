@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mouf Media Admin Portal | Site, Leads &amp; Portfolio Management</title>
+    
+    <!-- Protect Admin Portal from Search Engines -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" href="aseets/logo.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Admin CSS -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- =========================================================================
+         1. ADMIN LOGIN VIEW
+         ========================================================================= -->
+    <div id="adminLoginScreen" class="admin-login-wrapper">
+        <div class="admin-login-card">
+            <a href="index.html">
+                <img src="aseets/logo.png" alt="Mouf Media Logo" class="login-brand-logo">
+            </a>
+            <span class="login-brand-tag">MANAGEMENT PORTAL</span>
+            
+            <h1 class="login-title">Admin Sign In</h1>
+            <p class="login-subtitle">Manage customer leads, portfolio pictures &amp; site settings</p>
+
+            <div id="loginErrorAlert" class="login-error-alert" style="display: none;"></div>
+
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                <div class="login-form-group">
+                    <label class="login-label">Username</label>
+                    <div class="login-input-wrap">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="loginUsername" class="login-input" placeholder="e.g. admin" required autofocus autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="login-form-group">
+                    <label class="login-label">Password</label>
+                    <div class="login-input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="loginPassword" class="login-input" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)" title="Show/Hide Password" aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-options-row">
+                    <label class="login-remember-label">
+                        <input type="checkbox" id="loginRememberMe" checked>
+                        <span>Remember session on this device</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="loginSubmitBtn" class="btn-admin-login">
+                    <span>ENTER DASHBOARD</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         2. MAIN ADMIN APPLICATION LAYOUT
+         ========================================================================= -->
+    <div id="adminAppLayout" class="admin-app-layout" style="display: none;">
+
+        <!-- Mobile Sidebar Backdrop Overlay -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop" onclick="toggleMobileSidebar()"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="adminSidebar" class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-left">
+                    <a href="index.html">
+                        <img src="aseets/logo.png" alt="Mouf Media Logo" class="sidebar-logo">
+                    </a>
+                    <div class="sidebar-brand-text">
+                        <span class="sidebar-brand-name">MOUF MEDIA</span>
+                        <span class="sidebar-brand-badge">ADMIN CONTROL</span>
+                    </div>
+                </div>
+                <button class="sidebar-close-btn" onclick="toggleMobileSidebar()" aria-label="Close Sidebar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button id="nav-leads" class="nav-item-btn active" onclick="switchAdminTab('leads')">
+                    <i class="fa-solid fa-inbox"></i>
+                    <span>Inquiries &amp; Leads</span>
+                    <span id="newLeadsBadge" class="nav-badge" style="display: none;">0</span>
+                </button>
+
+                <button id="nav-projects" class="nav-item-btn" onclick="switchAdminTab('projects')">
+                    <i class="fa-solid fa-images"></i>
+                    <span>Portfolio Projects</span>
+                </button>
+
+                <button id="nav-settings" class="nav-item-btn" onclick="switchAdminTab('settings')">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Site Settings</span>
+                </button>
+
+                <button id="nav-security" class="nav-item-btn" onclick="switchAdminTab('security')">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Security &amp; Password</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-avatar">M</div>
+                    <div class="admin-user-details">
+                        <span class="admin-user-name">Mouf Admin</span>
+                        <span class="admin-user-role">Site Administrator</span>
+                    </div>
+                </div>
+                <button class="btn-logout" title="Sign Out" onclick="handleAdminLogout()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="admin-main-area">
+
+            <!-- Top Header Bar -->
+            <header class="admin-top-bar">
+                <div class="top-bar-left">
+                    <button class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h2 id="currentTabTitle" class="page-breadcrumb-title">Inquiries &amp; Leads</h2>
+                </div>
+                <div class="top-bar-actions">
+                    <button class="btn-refresh-data" onclick="refreshCurrentTabData()" title="Refresh Data">
+                        <i class="fa-solid fa-arrows-rotate"></i> <span>Refresh</span>
+                    </button>
+                    <a href="index.html" target="_blank" class="btn-view-website">
+                        <i class="fa-solid fa-globe"></i> <span>View Live Site</span>
+                    </a>
+                </div>
+            </header>
+
+            <div class="admin-page-container">
+
+                <!-- -----------------------------------------------------------------
+                     TAB 1: INQUIRIES & LEADS CRM (NEW!)
+                     ----------------------------------------------------------------- -->
+                <div id="tab-leads" class="tab-pane active">
+                    <!-- Leads Summary Cards -->
+                    <div class="leads-stats-grid">
+                        <div class="lead-stat-card">
+                            <div class="lead-stat-icon total"><i class="fa-solid fa-users"></i></div>
+                            <div class="lead-stat-data">
+                                <span class="lead-stat-val" id="statTotalLeads">0</span>
+                                <span class="lead-stat-lbl">Total Inquiries</span>
+                            </div>
+                        </div>
+                        <div class="lead-stat-card">
+                            <div class="lead-stat-icon new"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="lead-stat-data">
+                                <span class="lead-stat-val" id="statNewLeads">0</span>
+                                <span class="lead-stat-lbl">New / Unread</span>
+                            </div>
+                        </div>
+                        <div class="lead-stat-card">
+                            <div class="lead-stat-icon contacted"><i class="fa-solid fa-phone-volume"></i></div>
+                            <div class="lead-stat-data">
+                                <span class="lead-stat-val" id="statContactedLeads">0</span>
+                                <span class="lead-stat-lbl">Contacted</span>
+                            </div>
+                        </div>
+                        <div class="lead-stat-card">
+                            <div class="lead-stat-icon converted"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="lead-stat-data">
+                                <span class="lead-stat-val" id="statConvertedLeads">0</span>
+                                <span class="lead-stat-lbl">Converted / Booked</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h3 class="card-title">Customer Inquiries &amp; Quotes</h3>
+                                <p class="card-desc">Real-time leads received from your website contact forms and calculator quotes</p>
+                            </div>
+                            <div class="card-actions-group">
+                                <button class="btn-adm-secondary" onclick="exportLeadsToCSV()">
+                                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Search & Filter Controls -->
+                        <div class="leads-filter-bar">
+                            <div class="leads-search-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="leadsSearchInput" placeholder="Search by name, phone, email, service..." oninput="handleLeadsSearch()">
+                            </div>
+                            <div class="leads-status-filters">
+                                <button class="filter-pill active" data-status="all" onclick="filterLeadsByStatus('all')">All</button>
+                                <button class="filter-pill" data-status="new" onclick="filterLeadsByStatus('new')">New</button>
+                                <button class="filter-pill" data-status="contacted" onclick="filterLeadsByStatus('contacted')">Contacted</button>
+                                <button class="filter-pill" data-status="converted" onclick="filterLeadsByStatus('converted')">Converted</button>
+                                <button class="filter-pill" data-status="archived" onclick="filterLeadsByStatus('archived')">Archived</button>
+                            </div>
+                        </div>
+
+                        <!-- Leads List Container -->
+                        <div id="adminLeadsList" class="leads-admin-container">
+                            <!-- Dynamic leads from admin.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -----------------------------------------------------------------
+                     TAB 2: PORTFOLIO & PROJECTS MANAGER (WITH SERVER PHOTO UPLOADS)
+                     ----------------------------------------------------------------- -->
+                <div id="tab-projects" class="tab-pane">
+                    <div class="admin-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h3 class="card-title">Live Portfolio &amp; Projects</h3>
+                                <p class="card-desc">Add pictures and showcase events to appear instantly on the public Projects gallery worldwide</p>
+                            </div>
+                            <div class="card-actions-group">
+                                <button class="btn-adm-primary" onclick="openAddProjectModal()">
+                                    <i class="fa-solid fa-plus"></i> Add New Project Picture
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="adminProjectsList" class="project-admin-grid">
+                            <!-- Dynamic project cards from admin.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- -----------------------------------------------------------------
+                     TAB 3: SITE SETTINGS & INFORMATION
+                     ----------------------------------------------------------------- -->
+                <div id="tab-settings" class="tab-pane">
+                    <div class="admin-card" style="max-width: 680px;">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h3 class="card-title">Website Settings &amp; Information</h3>
+                                <p class="card-desc">When you change these details, they automatically update across the entire website!</p>
+                            </div>
+                        </div>
+
+                        <form id="siteSettingsForm" onsubmit="handleSaveSettings(event)">
+                            <div class="form-grid-two">
+                                <div class="adm-form-group">
+                                    <label class="adm-label">Phone Number (Call Buttons &amp; Listings)</label>
+                                    <input type="text" id="settPhone" class="adm-input" placeholder="+91 9995 800 444" required>
+                                </div>
+                                <div class="adm-form-group">
+                                    <label class="adm-label">WhatsApp Number</label>
+                                    <input type="text" id="settWhatsapp" class="adm-input" placeholder="+91 9995 800 444" required>
+                                </div>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label class="adm-label">Recipient Email Address (For Leads &amp; Inquiries)</label>
+                                <input type="email" id="settEmail" class="adm-input" placeholder="muhammadnihalom@gmail.com" required>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label class="adm-label">Office Address</label>
+                                <input type="text" id="settAddress" class="adm-input" placeholder="Mouf Media, Kozhikode, Kerala, India - 673001" required>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label class="adm-label">Default Base Rate / Sq.Ft (₹)</label>
+                                <input type="number" id="settBaseRate" class="adm-input" min="10" value="120" required>
+                            </div>
+
+                            <button type="submit" id="saveSettingsBtn" class="btn-adm-primary" style="padding: 13px 26px; margin-top: 10px;">
+                                <i class="fa-solid fa-floppy-disk"></i> Save &amp; Apply Everywhere
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- -----------------------------------------------------------------
+                     TAB 4: SECURITY & PASSWORD (NEW!)
+                     ----------------------------------------------------------------- -->
+                <div id="tab-security" class="tab-pane">
+                    <div class="admin-card" style="max-width: 600px;">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h3 class="card-title">Change Admin Password</h3>
+                                <p class="card-desc">Protect your management portal with a secure master password</p>
+                            </div>
+                        </div>
+
+                        <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                            <div class="adm-form-group">
+                                <label class="adm-label">Current Password</label>
+                                <div class="login-input-wrap">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="passCurrent" class="login-input" placeholder="Enter current password" required>
+                                    <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('passCurrent', this)" title="Show/Hide Password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label class="adm-label">New Password</label>
+                                <div class="login-input-wrap">
+                                    <i class="fa-solid fa-key"></i>
+                                    <input type="password" id="passNew" class="login-input" placeholder="Enter new password (min. 6 characters)" required minlength="6">
+                                    <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('passNew', this)" title="Show/Hide Password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="adm-form-group">
+                                <label class="adm-label">Confirm New Password</label>
+                                <div class="login-input-wrap">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    <input type="password" id="passConfirm" class="login-input" placeholder="Re-type new password" required minlength="6">
+                                    <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('passConfirm', this)" title="Show/Hide Password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="password-safety-note">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Passwords are securely hashed using PBKDF2 with SHA-512 and salted on the server.</span>
+                            </div>
+
+                            <button type="submit" id="updatePassBtn" class="btn-adm-primary" style="padding: 13px 26px; margin-top: 14px;">
+                                <i class="fa-solid fa-shield-halved"></i> Update Admin Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- =========================================================================
+         MODALS
+         ========================================================================= -->
+
+    <!-- Add Project Modal with Photo / Image Upload -->
+    <div id="addProjectModal" class="admin-modal-backdrop">
+        <div class="admin-modal">
+            <button class="modal-close-btn" onclick="closeModal('addProjectModal')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="modal-title">Add Portfolio Project Picture</h3>
+            <p class="modal-subtitle">Upload pictures from your phone/computer or enter image URL</p>
+
+            <form id="addProjectForm" onsubmit="handleAddProjectSubmit(event)">
+                
+                <!-- Image Upload Dropzone -->
+                <div class="adm-form-group">
+                    <label class="adm-label">Select Project Photo / Picture</label>
+                    <div class="image-upload-dropzone" id="projectDropzone" onclick="document.getElementById('newProjFileInput').click()">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--adm-primary); margin-bottom: 8px;"></i>
+                        <span style="font-size: 0.88rem; color: #ffffff; font-weight: 700;">Tap or Click to Upload Picture</span>
+                        <span style="font-size: 0.74rem; color: var(--adm-text-dim); margin-top: 4px;">Supports JPG, PNG, WEBP from Gallery or Camera</span>
+                        <input type="file" id="newProjFileInput" accept="image/*" style="display: none;" onchange="handleProjectFileSelect(event)">
+                    </div>
+
+                    <!-- Uploaded Image Live Preview -->
+                    <div id="newProjPreviewWrap" style="display: none; margin-top: 12px; position: relative;">
+                        <img id="newProjPreviewImg" src="" alt="Selected Preview" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid var(--adm-card-border);">
+                        <button type="button" class="remove-preview-btn" onclick="clearProjectImagePreview()" title="Remove Picture">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Optional URL fallback -->
+                    <div style="margin-top: 10px;">
+                        <span style="font-size: 0.72rem; color: var(--adm-text-dim); display: block; margin-bottom: 4px;">OR paste an image URL / path:</span>
+                        <input type="text" id="newProjImage" class="adm-input" placeholder="e.g. images/sports_event_1786554964693.png">
+                    </div>
+                </div>
+
+                <div class="adm-form-group">
+                    <label class="adm-label">Project / Event Title</label>
+                    <input type="text" id="newProjTitle" class="adm-input" placeholder="e.g. Calicut Beach Mega Concert" required>
+                </div>
+                
+                <div class="form-grid-two">
+                    <div class="adm-form-group">
+                        <label class="adm-label">Category</label>
+                        <select id="newProjCat" class="adm-select" required>
+                            <option value="CONCERTS & FESTIVALS">Concerts &amp; Festivals</option>
+                            <option value="LIVE EVENTS">Live Events &amp; Arena</option>
+                            <option value="AUDITORIUMS">Auditorium &amp; Indoor</option>
+                            <option value="CORPORATE">Corporate &amp; Summit</option>
+                            <option value="WEDDINGS">Weddings &amp; Celebrations</option>
+                            <option value="OUTDOOR & SPORTS">Outdoor &amp; Sports</option>
+                        </select>
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-label">Venue / City</label>
+                        <input type="text" id="newProjVenue" class="adm-input" placeholder="e.g. Kozhikode, Kerala">
+                    </div>
+                </div>
+
+                <button type="submit" id="addProjectSubmitBtn" class="btn-adm-primary" style="width: 100%; justify-content: center; padding: 13px; margin-top: 6px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Publish Picture to Website
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="admin.js"></script>
+</body>
+</html>
