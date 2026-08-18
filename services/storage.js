@@ -50,9 +50,9 @@ const DEFAULT_SETTINGS = () => {
         adminUsername: process.env.ADMIN_USERNAME || 'admin',
         adminPasswordHash: hash,
         adminPasswordSalt: salt,
-        phone: '+91 9995 800 444',
-        whatsapp: '+91 9995 800 444',
-        email: 'muhammadnihalom@gmail.com',
+        phone: '+91 90615 00511',
+        whatsapp: '+91 90615 00511',
+        email: 'moufmeadia@gmail.com',
         address: 'Mouf Media, Kozhikode, Kerala, India - 673001',
         baseRate: 120,
         updatedAt: new Date().toISOString()
@@ -165,9 +165,9 @@ const StorageService = {
     getPublicSettings() {
         const settings = this.getSettings();
         return {
-            phone: settings.phone || '+91 9995 800 444',
-            whatsapp: settings.whatsapp || '+91 9995 800 444',
-            email: settings.email || 'muhammadnihalom@gmail.com',
+            phone: settings.phone || '+91 90615 00511',
+            whatsapp: settings.whatsapp || '+91 90615 00511',
+            email: settings.email || 'moufmeadia@gmail.com',
             address: settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001',
             baseRate: settings.baseRate || 120,
             updatedAt: settings.updatedAt || new Date().toISOString()

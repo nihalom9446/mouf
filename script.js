@@ -20,17 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const settings = settingsData || JSON.parse(localStorage.getItem('mouf_settings') || '{}');
             if (!settings || Object.keys(settings).length === 0) return;
 
-            const phone = settings.phone || '+91 9995 800 444';
+            const phone = settings.phone || '+91 90615 00511';
             const cleanPhone = phone.replace(/[^0-9+]/g, '');
-            const whatsapp = settings.whatsapp || '+91 9995 800 444';
+            const whatsapp = settings.whatsapp || '+91 90615 00511';
             const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
-            const email = settings.email || 'muhammadnihalom@gmail.com';
+            const email = settings.email || 'moufmeadia@gmail.com';
             const address = settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001';
 
             // 1. Update all Phone Links & Visible Phone Text
             document.querySelectorAll('a[href^="tel:"]').forEach(el => {
                 el.href = `tel:${cleanPhone}`;
-                if (el.textContent.includes('+91') || el.textContent.includes('9995') || el.textContent.includes('8089')) {
+                if (el.textContent.includes('+91') || el.textContent.includes('90615') || el.textContent.includes('9995') || el.textContent.includes('8089')) {
                     el.textContent = phone;
                 }
             });
@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update WhatsApp CTA Quote Link
             if (quoteBtn) {
-                const whatsappPhone = settings.whatsapp ? settings.whatsapp.replace(/[^0-9]/g, '') : '919995800444';
+                const whatsappPhone = settings.whatsapp ? settings.whatsapp.replace(/[^0-9]/g, '') : '919061500511';
                 const messageText = encodeURIComponent(
                     `Hi Mouf Media, I calculated an LED Wall estimate on your website:\n` +
                     `• Screen Size: ${sqft} sq.ft (${w > 0 && h > 0 ? `${w}ft x ${h}ft` : 'Custom'})\n` +
@@ -425,7 +425,7 @@ window.handleContactSubmit = async function(e) {
     
     // Dynamic Recipient Email from Admin Settings
     const settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
-    const RECIPIENT_EMAIL = settings.email || 'muhammadnihalom@gmail.com';
+    const RECIPIENT_EMAIL = settings.email || 'moufmeadia@gmail.com';
 
     const form = document.getElementById('contactForm');
     const nameInput = document.getElementById('contactName');
@@ -635,11 +635,11 @@ function ensureProjectModal() {
                         <div class="project-modal-feature-item"><i class="fa-solid fa-truck-fast"></i> Fast Delivery &amp; Setup</div>
                     </div>
                     <div class="project-modal-actions">
-                        <a id="modalProjWhatsappBtn" href="https://wa.me/919995800444" target="_blank" rel="noopener noreferrer" class="btn-modal-inquire">
+                        <a id="modalProjWhatsappBtn" href="https://wa.me/919061500511" target="_blank" rel="noopener noreferrer" class="btn-modal-inquire">
                             <i class="fa-brands fa-whatsapp" style="font-size: 1.25rem;"></i>
                             <span>INQUIRE ABOUT THIS SETUP</span>
                         </a>
-                        <a id="modalProjCallBtn" href="tel:+919995800444" class="btn-modal-call">
+                        <a id="modalProjCallBtn" href="tel:+919061500511" class="btn-modal-call">
                             <i class="fa-solid fa-phone"></i>
                             <span>CALL US</span>
                         </a>
@@ -719,8 +719,8 @@ window.openProjectModal = function(targetOrData, optEvent) {
         settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
     } catch (e) {}
 
-    const whatsappNumber = (settings.whatsapp || '+91 9995 800 444').replace(/[^0-9]/g, '') || '919995800444';
-    const phoneNumber = (settings.phone || '+91 9995 800 444').replace(/[^0-9+]/g, '') || '+919995800444';
+    const whatsappNumber = (settings.whatsapp || '+91 90615 00511').replace(/[^0-9]/g, '') || '919061500511';
+    const phoneNumber = (settings.phone || '+91 90615 00511').replace(/[^0-9+]/g, '') || '+919061500511';
 
     const inquiryText = encodeURIComponent(
         `Hi Mouf Media, I am interested in your project setup:\n\n` +
