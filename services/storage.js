@@ -52,7 +52,7 @@ const DEFAULT_SETTINGS = () => {
         adminPasswordSalt: salt,
         phone: '+91 90615 00511',
         whatsapp: '+91 90615 00511',
-        email: 'moufmeadia@gmail.com',
+        email: 'moufmediaclt@gmail.com',
         address: 'Mouf Media, Kozhikode, Kerala, India - 673001',
         baseRate: 120,
         updatedAt: new Date().toISOString()
@@ -167,7 +167,7 @@ const StorageService = {
         return {
             phone: settings.phone || '+91 90615 00511',
             whatsapp: settings.whatsapp || '+91 90615 00511',
-            email: settings.email || 'moufmeadia@gmail.com',
+            email: settings.email || 'moufmediaclt@gmail.com',
             address: settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001',
             baseRate: settings.baseRate || 120,
             updatedAt: settings.updatedAt || new Date().toISOString()

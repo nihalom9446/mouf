@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cleanPhone = phone.replace(/[^0-9+]/g, '');
             const whatsapp = settings.whatsapp || '+91 90615 00511';
             const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
-            const email = settings.email || 'moufmeadia@gmail.com';
+            const email = settings.email || 'moufmediaclt@gmail.com';
             const address = settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001';
 
             // 1. Update all Phone Links & Visible Phone Text
@@ -425,7 +425,7 @@ window.handleContactSubmit = async function(e) {
     
     // Dynamic Recipient Email from Admin Settings
     const settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
-    const RECIPIENT_EMAIL = settings.email || 'moufmeadia@gmail.com';
+    const RECIPIENT_EMAIL = settings.email || 'moufmediaclt@gmail.com';
 
     const form = document.getElementById('contactForm');
     const nameInput = document.getElementById('contactName');
