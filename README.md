@@ -43,14 +43,3 @@ npm run dev
 # Or: node server.js
 ```
 The server will start at `http://localhost:3000`.
-
-### 3. Admin Access
-- Navigate to `http://localhost:3000/admin.html`
-- **Default Username**: `admin`
-- **Default Password**: `mouf2025`
-*(Credentials can be modified securely from the Admin Settings tab)*
-
----
-
-## 📄 License
-All rights reserved © 2025 Mouf Media.
