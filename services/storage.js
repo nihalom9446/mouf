@@ -65,7 +65,7 @@ const DEFAULT_PROJECTS = [
         title: 'Mega Concert Stage Setup',
         category: 'CONCERTS & FESTIVALS',
         venue: 'Calicut Beach Open Grounds',
-        image: 'images/concert_event_1786554949165.png',
+        image: 'images/concert_event_1786554949165.webp',
         createdAt: new Date().toISOString()
     },
     {
@@ -73,7 +73,7 @@ const DEFAULT_PROJECTS = [
         title: 'Arena Visual Production',
         category: 'LIVE EVENTS',
         venue: 'Indoor Stadium Arena',
-        image: 'images/project_hero_stage.png',
+        image: 'images/project_hero_stage.webp',
         createdAt: new Date().toISOString()
     },
     {
@@ -81,7 +81,7 @@ const DEFAULT_PROJECTS = [
         title: 'Indoor Curved Display Wall',
         category: 'AUDITORIUMS',
         venue: 'University Grand Auditorium',
-        image: 'images/rental_hero_stage.png',
+        image: 'images/rental_hero_stage.webp',
         createdAt: new Date().toISOString()
     },
     {
@@ -89,7 +89,7 @@ const DEFAULT_PROJECTS = [
         title: 'Global Summit Video Wall',
         category: 'CORPORATE',
         venue: 'Lulu International Convention Centre',
-        image: 'images/corporate_event_1786554835253.png',
+        image: 'images/corporate_event_1786554835253.webp',
         createdAt: new Date().toISOString()
     },
     {
@@ -97,7 +97,7 @@ const DEFAULT_PROJECTS = [
         title: 'Royal Wedding Stage Backdrop',
         category: 'WEDDINGS',
         venue: 'The Gateway Hotel, Beach Road',
-        image: 'images/wedding_event_1786554814381.png',
+        image: 'images/wedding_event_1786554814381.webp',
         createdAt: new Date().toISOString()
     },
     {
@@ -105,7 +105,7 @@ const DEFAULT_PROJECTS = [
         title: 'Stadium Live Screening',
         category: 'OUTDOOR & SPORTS',
         venue: 'Corporation Stadium Ground',
-        image: 'images/sports_event_1786554964693.png',
+        image: 'images/sports_event_1786554964693.webp',
         createdAt: new Date().toISOString()
     }
 ];
