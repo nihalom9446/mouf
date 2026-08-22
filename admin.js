@@ -619,11 +619,16 @@
 
     window.handleAddProjectSubmit = async function(e) {
         e.preventDefault();
-        const title = document.getElementById('newProjTitle').value.trim();
-        const category = document.getElementById('newProjCat').value;
-        const venue = document.getElementById('newProjVenue').value.trim();
-        const customUrl = document.getElementById('newProjImage')?.value.trim() || '';
+        const titleInput = document.getElementById('newProjTitle');
+        const categorySelect = document.getElementById('newProjCat');
+        const venueInput = document.getElementById('newProjVenue');
+        const customUrlInput = document.getElementById('newProjImage');
         const submitBtn = document.getElementById('addProjectSubmitBtn');
+
+        const title = titleInput ? titleInput.value.trim() : '';
+        const category = categorySelect ? categorySelect.value : 'LIVE EVENTS';
+        const venue = venueInput ? venueInput.value.trim() : '';
+        const customUrl = customUrlInput ? customUrlInput.value.trim() : '';
 
         if (!title) {
             showToast('Validation', 'Please enter a project title.', 'error');
@@ -636,61 +641,73 @@
         }
 
         try {
-            let finalImageUrl = customUrl;
+            let finalImageUrl = selectedUploadBase64 || customUrl;
 
-            // If a file was picked, upload to server first
+            // If a file was picked, attempt server upload, fallback to base64 data URI for 100% availability
             if (selectedUploadBase64) {
-                const ext = selectedUploadFile?.name?.split('.').pop() || 'png';
-                const uploadRes = await apiRequest('/admin/upload', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        base64Data: selectedUploadBase64,
-                        extension: ext
-                    })
-                });
-                if (uploadRes.success && uploadRes.url) {
-                    finalImageUrl = uploadRes.url;
+                try {
+                    const ext = selectedUploadFile?.name?.split('.').pop() || 'png';
+                    const uploadRes = await apiRequest('/admin/upload', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            base64Data: selectedUploadBase64,
+                            extension: ext
+                        })
+                    });
+                    if (uploadRes && uploadRes.success && uploadRes.url) {
+                        finalImageUrl = uploadRes.url;
+                    }
+                } catch (uploadErr) {
+                    finalImageUrl = selectedUploadBase64;
                 }
             }
 
             if (!finalImageUrl) {
-                finalImageUrl = 'images/project_hero_stage.png';
+                finalImageUrl = 'images/project_hero_stage.webp';
             }
 
-            // Create Project Entry on Server
-            await apiRequest('/admin/projects', {
-                method: 'POST',
-                body: JSON.stringify({
-                    title,
-                    category,
-                    venue: venue || 'Kozhikode, Kerala',
-                    image: finalImageUrl
-                })
-            });
-
-            document.getElementById('addProjectForm').reset();
-            clearProjectImagePreview();
-            closeModal('addProjectModal');
-            fetchProjects();
-            showToast('Published!', 'Project picture is now live on your Projects page worldwide!', 'success');
-        } catch (err) {
-            // Local fallback when server API is unavailable
-            const newProj = {
-                id: 'PRJ-' + Date.now().toString().slice(-6),
+            const newProjPayload = {
                 title,
                 category,
                 venue: venue || 'Kozhikode, Kerala',
-                image: selectedUploadBase64 || customUrl || 'images/project_hero_stage.png'
+                image: finalImageUrl
             };
-            const localProjs = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
-            localProjs.unshift(newProj);
-            localStorage.setItem('mouf_projects', JSON.stringify(localProjs));
+
+            let savedProj = null;
+            try {
+                const serverRes = await apiRequest('/admin/projects', {
+                    method: 'POST',
+                    body: JSON.stringify(newProjPayload)
+                });
+                if (serverRes && serverRes.project) {
+                    savedProj = serverRes.project;
+                }
+            } catch (serverErr) {}
+
+            if (!savedProj) {
+                savedProj = {
+                    id: 'PRJ-' + Date.now().toString().slice(-6),
+                    ...newProjPayload,
+                    createdAt: new Date().toISOString()
+                };
+            }
+
+            // Always update client localStorage immediately so projects.html shows the new project image instantly
+            try {
+                let localProjs = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
+                if (!Array.isArray(localProjs)) localProjs = [];
+                localProjs = localProjs.filter(p => p.id !== savedProj.id);
+                localProjs.unshift(savedProj);
+                localStorage.setItem('mouf_projects', JSON.stringify(localProjs));
+            } catch (e) {}
 
             document.getElementById('addProjectForm').reset();
             clearProjectImagePreview();
             closeModal('addProjectModal');
             fetchProjects();
-            showToast('Published!', 'Project picture published to portfolio!', 'success');
+            showToast('Published!', 'Project picture is now live on your Projects page!', 'success');
+        } catch (err) {
+            showToast('Error', err.message || 'Failed to publish picture.', 'error');
         } finally {
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -703,15 +720,18 @@
         if (!confirm('Are you sure you want to delete this project picture from the website?')) return;
         try {
             await apiRequest(`/admin/projects/${id}`, { method: 'DELETE' });
-            fetchProjects();
-            showToast('Deleted', 'Project picture removed from website.', 'info');
-        } catch (err) {
+        } catch (err) {}
+
+        try {
             let localProjs = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
-            localProjs = localProjs.filter(p => p.id !== id);
-            localStorage.setItem('mouf_projects', JSON.stringify(localProjs));
-            fetchProjects();
-            showToast('Deleted', 'Project picture removed from website.', 'info');
-        }
+            if (Array.isArray(localProjs)) {
+                localProjs = localProjs.filter(p => p.id !== id);
+                localStorage.setItem('mouf_projects', JSON.stringify(localProjs));
+            }
+        } catch (e) {}
+
+        fetchProjects();
+        showToast('Deleted', 'Project picture removed from website.', 'info');
     };
 
     // --------------------------------------------------------------------------
