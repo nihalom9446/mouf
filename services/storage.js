@@ -57,6 +57,7 @@ const DEFAULT_SETTINGS = () => {
         instagram: 'https://www.instagram.com/moufmedia/',
         youtube: 'https://www.youtube.com/c/MoufMedia/streams',
         facebook: 'https://www.facebook.com/MouFmedia/',
+        googleBusiness: 'https://share.google/vPwYjwVb6ypXDf9ZS',
         baseRate: 120,
         updatedAt: new Date().toISOString()
     };
@@ -175,6 +176,7 @@ const StorageService = {
             instagram: settings.instagram || 'https://www.instagram.com/moufmedia/',
             youtube: settings.youtube || 'https://www.youtube.com/c/MoufMedia/streams',
             facebook: settings.facebook || 'https://www.facebook.com/MouFmedia/',
+            googleBusiness: settings.googleBusiness || 'https://share.google/vPwYjwVb6ypXDf9ZS',
             baseRate: settings.baseRate || 120,
             updatedAt: settings.updatedAt || new Date().toISOString()
         };

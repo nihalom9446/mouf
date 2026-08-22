@@ -91,10 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.textContent = address;
             });
 
-            // 6. Update Social Media Links
+            // 6. Update Social & Google Business Links
             const instagramUrl = settings.instagram || 'https://www.instagram.com/moufmedia/';
             const youtubeUrl = settings.youtube || 'https://www.youtube.com/c/MoufMedia/streams';
             const facebookUrl = settings.facebook || 'https://www.facebook.com/MouFmedia/';
+            const googleUrl = settings.googleBusiness || 'https://share.google/vPwYjwVb6ypXDf9ZS';
 
             document.querySelectorAll('a[aria-label="Instagram"], a[href*="instagram.com"]').forEach(el => {
                 el.href = instagramUrl;
@@ -104,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             document.querySelectorAll('a[aria-label="Facebook"], a[href*="facebook.com"]').forEach(el => {
                 el.href = facebookUrl;
+            });
+            document.querySelectorAll('a[aria-label="Google Business"], a[href*="share.google"]').forEach(el => {
+                el.href = googleUrl;
             });
 
         } catch (e) {
