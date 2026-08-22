@@ -100,9 +100,6 @@
             });
 
             if (res.status === 401) {
-                clearToken();
-                checkAuthAndRender();
-                showToast('Session Expired', 'Please log in again to continue.', 'error');
                 throw new Error('Unauthorized');
             }
 
@@ -131,19 +128,34 @@
             return;
         }
 
+        // Helper: check if a locally-minted session token is still within its 7-day window
+        function isLocalTokenFresh() {
+            try {
+                const meta = JSON.parse(localStorage.getItem('mouf_admin_token_meta') || '{}');
+                return meta.issuedAt && (Date.now() - meta.issuedAt < 7 * 24 * 60 * 60 * 1000);
+            } catch (e) { return false; }
+        }
+
+        // On Vercel serverless the file-based session store is ephemeral.
+        // If the server returns 401, trust a locally-stored fresh token so the
+        // user is NOT logged out on every serverless cold start.
         try {
             await apiRequest('/admin/session', { method: 'GET' });
+            // Server confirmed the session is valid
             if (loginScreen) loginScreen.style.display = 'none';
             if (appLayout) appLayout.style.display = 'flex';
             loadActiveTabData();
         } catch (err) {
-            // If offline or static host, preserve existing valid token session
-            if (token) {
+            // Server couldn't verify (401 or network error).
+            // Keep the user logged in if the token was issued recently.
+            if (token && isLocalTokenFresh()) {
                 if (loginScreen) loginScreen.style.display = 'none';
                 if (appLayout) appLayout.style.display = 'flex';
                 loadActiveTabData();
                 return;
             }
+            // Token is truly stale or missing — show login
+            clearToken();
             if (loginScreen) loginScreen.style.display = 'flex';
             if (appLayout) appLayout.style.display = 'none';
         }
@@ -183,6 +195,8 @@
 
             if (data.success && data.token) {
                 setToken(data.token, remember);
+                // Record issuance time for local freshness checks
+                try { localStorage.setItem('mouf_admin_token_meta', JSON.stringify({ issuedAt: Date.now() })); } catch(e) {}
                 if (usernameInput) usernameInput.value = '';
                 if (passwordInput) passwordInput.value = '';
                 showToast('Welcome Back!', 'Successfully logged in to Mouf Media Admin.', 'success');
@@ -196,6 +210,7 @@
 
             if (validUser && validPass) {
                 setToken('mouf_admin_local_session_' + Date.now(), remember);
+                try { localStorage.setItem('mouf_admin_token_meta', JSON.stringify({ issuedAt: Date.now() })); } catch(e) {}
                 if (usernameInput) usernameInput.value = '';
                 if (passwordInput) passwordInput.value = '';
                 showToast('Welcome Back!', 'Successfully logged in to Mouf Media Admin.', 'success');
@@ -224,6 +239,7 @@
             // Proceed with local logout regardless of server state
         }
         clearToken();
+        try { localStorage.removeItem('mouf_admin_token_meta'); } catch(e) {}
         showToast('Logged Out', 'You have been safely signed out.', 'info');
         checkAuthAndRender();
     };
