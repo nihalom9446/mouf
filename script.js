@@ -683,29 +683,42 @@ function ensureProjectModal() {
 
 // Global open function accessible from anywhere
 window.openProjectModal = function(targetOrData, optEvent) {
-    if (optEvent && optEvent.preventDefault) optEvent.preventDefault();
-    if (optEvent && optEvent.stopPropagation) optEvent.stopPropagation();
+    let evt = optEvent;
+    let target = targetOrData;
+
+    // Handle case where Event object is passed directly as 1st argument
+    if (targetOrData && (targetOrData.target || targetOrData.currentTarget) && !(targetOrData instanceof HTMLElement || targetOrData.nodeType === 1)) {
+        evt = targetOrData;
+        target = targetOrData.currentTarget || targetOrData.target;
+    }
+
+    if (evt && evt.preventDefault) evt.preventDefault();
+    if (evt && evt.stopPropagation) evt.stopPropagation();
 
     const modal = ensureProjectModal();
     let data = {};
 
-    if (targetOrData && (targetOrData instanceof HTMLElement || targetOrData.nodeType === 1)) {
-        const card = targetOrData.closest('.gallery-card, .service-card') || targetOrData;
-        const title = card.getAttribute('data-title') || card.querySelector('h3, .gallery-item-title')?.textContent?.trim() || 'LED Video Wall Setup';
-        const category = card.getAttribute('data-category') || card.querySelector('.gallery-cat')?.textContent?.trim() || title;
-        const venue = card.getAttribute('data-venue') || 'Kozhikode & All Kerala';
-        let image = card.getAttribute('data-image') || card.querySelector('img')?.getAttribute('src');
+    let cardElement = null;
+    if (target && (target instanceof HTMLElement || target.nodeType === 1)) {
+        cardElement = target.closest('.gallery-card, .service-card') || target;
+    }
+
+    if (cardElement) {
+        const title = cardElement.getAttribute('data-title') || cardElement.querySelector('h3, .gallery-item-title')?.textContent?.trim() || 'LED Video Wall Setup';
+        const category = cardElement.getAttribute('data-category') || cardElement.querySelector('.gallery-cat')?.textContent?.trim() || title;
+        const venue = cardElement.getAttribute('data-venue') || 'Kozhikode & All Kerala';
+        let image = cardElement.getAttribute('data-image') || cardElement.querySelector('img')?.getAttribute('src');
 
         if (!image) {
-            const bgDiv = card.querySelector('.service-image');
+            const bgDiv = cardElement.querySelector('.service-image');
             if (bgDiv) {
                 const bgMatch = (bgDiv.style.backgroundImage || '').match(/url\(['"]?(.*?)['"]?\)/);
                 if (bgMatch && bgMatch[1]) image = bgMatch[1];
             }
         }
 
-        const desc = card.querySelector('p')?.textContent?.trim() || '';
-        data = { title, category, venue, image: image || 'images/project_hero_stage.png', description: desc };
+        const desc = cardElement.querySelector('p')?.textContent?.trim() || '';
+        data = { title, category, venue, image: image || 'images/project_hero_stage.webp', description: desc };
     } else if (typeof targetOrData === 'object' && targetOrData !== null) {
         data = targetOrData;
     }
@@ -721,9 +734,18 @@ window.openProjectModal = function(targetOrData, optEvent) {
     const title = data.title || 'LED Video Wall Setup';
     const category = data.category || 'LIVE EVENTS';
     const venue = data.venue || 'Kozhikode & All Kerala';
-    const image = data.image || 'images/project_hero_stage.png';
+    let image = data.image || 'images/project_hero_stage.webp';
 
-    if (imgEl) imgEl.src = image;
+    if (imgEl) {
+        imgEl.src = image;
+        imgEl.onerror = function() {
+            if (this.src.includes('.webp')) {
+                this.src = this.src.replace('.webp', '.png');
+            } else {
+                this.src = 'images/corporate_event_1786554835253.webp';
+            }
+        };
+    }
     if (catEl) catEl.textContent = category;
     if (venueEl) venueEl.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${escapeHtml(venue)}`;
     if (titleEl) titleEl.textContent = title;
@@ -764,9 +786,7 @@ window.openProjectModal = function(targetOrData, optEvent) {
     }
 
     modal.style.display = 'flex';
-    setTimeout(() => {
-        modal.classList.add('active');
-    }, 10);
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 };
 
@@ -779,7 +799,7 @@ window.closeProjectModal = function(e) {
             if (!modal.classList.contains('active')) {
                 modal.style.display = 'none';
             }
-        }, 250);
+        }, 200);
         document.body.style.overflow = '';
     }
 };
@@ -791,8 +811,16 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Render Projects and setup Gallery
-document.addEventListener('DOMContentLoaded', () => {
+// =========================================================================
+// 10. DYNAMIC PROJECTS GALLERY RENDER
+// =========================================================================
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGalleryAndModal);
+} else {
+    initGalleryAndModal();
+}
+
+function initGalleryAndModal() {
     ensureProjectModal();
 
     const galleryGrid = document.getElementById('projectsGalleryGrid');
@@ -809,13 +837,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const title = p.title || 'LED Video Wall Setup';
             const cat = p.category || 'LIVE EVENTS';
             const venue = p.venue || 'Kozhikode, Kerala';
-            const img = p.image || 'images/project_hero_stage.png';
+            const img = p.image || 'images/project_hero_stage.webp';
 
             return `
                 <div class="gallery-card" data-title="${escapeHtml(title)}" data-category="${escapeHtml(cat)}" data-venue="${escapeHtml(venue)}" data-image="${img}" onclick="window.openProjectModal(this, event)">
                     <div class="gallery-expand-hint"><i class="fa-solid fa-expand"></i> Tap to View</div>
                     <div class="gallery-img-wrap">
-                        <img src="${img}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.src='images/corporate_event_1786554835253.png'">
+                        <img src="${img}" alt="${escapeHtml(title)}" loading="lazy" onerror="this.src='images/corporate_event_1786554835253.webp'">
                         <div class="gallery-overlay">
                             <span class="gallery-cat">${escapeHtml(cat)}</span>
                             <h3 class="gallery-item-title">${escapeHtml(title)}</h3>
@@ -858,4 +886,4 @@ document.addEventListener('DOMContentLoaded', () => {
             window.openProjectModal(card, e);
         }
     });
-});
+}
