@@ -771,9 +771,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const galleryGrid = document.getElementById('projectsGalleryGrid');
 
+    function sanitizeProjectsList(list) {
+        if (!Array.isArray(list)) return [];
+        return list.filter(p => p && p.title && p.title.trim().length > 2 && p.title.toLowerCase() !== 'vcnbmbm');
+    }
+
     function renderGallery(projects) {
-        if (!galleryGrid || !projects || projects.length === 0) return;
-        galleryGrid.innerHTML = projects.map(p => {
+        const cleanProjects = sanitizeProjectsList(projects);
+        if (!galleryGrid || cleanProjects.length === 0) return;
+        galleryGrid.innerHTML = cleanProjects.map(p => {
             const title = p.title || 'LED Video Wall Setup';
             const cat = p.category || 'LIVE EVENTS';
             const venue = p.venue || 'Kozhikode, Kerala';
@@ -797,15 +803,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (galleryGrid) {
         try {
             const storedProjects = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
-            if (storedProjects.length > 0) renderGallery(storedProjects);
+            const cleanStored = sanitizeProjectsList(storedProjects);
+            if (cleanStored.length > 0) renderGallery(cleanStored);
         } catch (e) {}
 
         fetch('/api/projects')
             .then(r => r.json())
             .then(data => {
                 if (data && data.success && Array.isArray(data.projects)) {
-                    localStorage.setItem('mouf_projects', JSON.stringify(data.projects));
-                    renderGallery(data.projects);
+                    const clean = sanitizeProjectsList(data.projects);
+                    localStorage.setItem('mouf_projects', JSON.stringify(clean));
+                    renderGallery(clean);
                 }
             })
             .catch(() => {});
