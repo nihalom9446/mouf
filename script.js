@@ -845,17 +845,17 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => {});
     }
 
-    // Global Event Delegation fallback for any other cards
+    // Global Event Delegation for all gallery & service cards and Tap to View hints
     document.addEventListener('click', (e) => {
+        const hint = e.target.closest('.gallery-expand-hint');
         const galleryCard = e.target.closest('.gallery-card');
         const serviceCard = e.target.closest('.service-card');
 
-        if (galleryCard && !galleryCard.hasAttribute('onclick')) {
+        const card = galleryCard || serviceCard || (hint ? hint.closest('.gallery-card, .service-card') : null);
+        if (card) {
             e.preventDefault();
-            window.openProjectModal(galleryCard, e);
-        } else if (serviceCard && !serviceCard.hasAttribute('onclick')) {
-            e.preventDefault();
-            window.openProjectModal(serviceCard, e);
+            e.stopPropagation();
+            window.openProjectModal(card, e);
         }
     });
 });

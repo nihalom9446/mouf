@@ -3533,6 +3533,8 @@ input, select, textarea {
     transform: translateY(-4px);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 3;
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .gallery-card:hover .gallery-expand-hint {
