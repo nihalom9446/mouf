@@ -477,11 +477,15 @@ app.get('*', (req, res, next) => {
 // ------------------------------------------------------------------------------
 // 7. START SERVER
 // ------------------------------------------------------------------------------
-app.listen(PORT, () => {
-    console.log('\n=============================================================');
-    console.log(`🚀 Mouf Media Server running live at: http://localhost:${PORT}`);
-    console.log(`📱 Meta WhatsApp Cloud API: ${whatsAppService.isConfigured() ? '✅ Configured' : '⚠️  Pending .env credentials'}`);
-    console.log(`🛡️  Admin REST API & Storage Engine: ✅ Initialized & Active`);
-    console.log(`🌐 Contact Form Endpoint: POST http://localhost:${PORT}/api/contact`);
-    console.log('=============================================================\n');
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log('\n=============================================================');
+        console.log(`🚀 Mouf Media Server running live at: http://localhost:${PORT}`);
+        console.log(`📱 Meta WhatsApp Cloud API: ${whatsAppService.isConfigured() ? '✅ Configured' : '⚠️  Pending .env credentials'}`);
+        console.log(`🛡️  Admin REST API & Storage Engine: ✅ Initialized & Active`);
+        console.log(`🌐 Contact Form Endpoint: POST http://localhost:${PORT}/api/contact`);
+        console.log('=============================================================\n');
+    });
+}
+
+module.exports = app;
