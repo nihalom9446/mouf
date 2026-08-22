@@ -842,7 +842,7 @@ function initGalleryAndModal() {
 
     function sanitizeProjectsList(list) {
         if (!Array.isArray(list)) return [];
-        return list.filter(p => p && p.title && p.title.trim().length > 2 && p.title.toLowerCase() !== 'vcnbmbm');
+        return list.filter(p => p && p.title && p.title.trim().length >= 1 && p.title.toLowerCase() !== 'vcnbmbm');
     }
 
     function renderGallery(projects) {
@@ -870,19 +870,36 @@ function initGalleryAndModal() {
     }
 
     if (galleryGrid) {
+        let storedProjects = [];
         try {
-            const storedProjects = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
-            const cleanStored = sanitizeProjectsList(storedProjects);
-            if (cleanStored.length > 0) renderGallery(cleanStored);
+            storedProjects = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
         } catch (e) {}
+
+        const cleanStored = sanitizeProjectsList(storedProjects);
+        if (cleanStored.length > 0) renderGallery(cleanStored);
 
         fetch('/api/projects')
             .then(r => r.json())
             .then(data => {
                 if (data && data.success && Array.isArray(data.projects)) {
-                    const clean = sanitizeProjectsList(data.projects);
-                    localStorage.setItem('mouf_projects', JSON.stringify(clean));
-                    renderGallery(clean);
+                    const serverClean = sanitizeProjectsList(data.projects);
+                    const currentLocal = JSON.parse(localStorage.getItem('mouf_projects') || '[]');
+                    const mergedMap = new Map();
+                    
+                    // Add local user-added projects first (take precedence)
+                    (currentLocal || []).forEach(p => {
+                        if (p && p.id && p.title) mergedMap.set(p.id, p);
+                    });
+                    // Add server projects if not already present
+                    (serverClean || []).forEach(p => {
+                        if (p && p.id && p.title && !mergedMap.has(p.id)) {
+                            mergedMap.set(p.id, p);
+                        }
+                    });
+
+                    const finalMerged = Array.from(mergedMap.values());
+                    localStorage.setItem('mouf_projects', JSON.stringify(finalMerged));
+                    renderGallery(finalMerged);
                 }
             })
             .catch(() => {});
