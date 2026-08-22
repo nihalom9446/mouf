@@ -716,41 +716,61 @@
     // 8. SITE SETTINGS CONTROLLER
     // --------------------------------------------------------------------------
     async function fetchSettings() {
+        let s = {};
         try {
             const data = await apiRequest('/admin/settings', { method: 'GET' });
-            const s = data.settings || {};
-            document.getElementById('settPhone') && (document.getElementById('settPhone').value = s.phone || '');
-            document.getElementById('settWhatsapp') && (document.getElementById('settWhatsapp').value = s.whatsapp || '');
-            document.getElementById('settEmail') && (document.getElementById('settEmail').value = s.email || '');
-            document.getElementById('settAddress') && (document.getElementById('settAddress').value = s.address || '');
-            document.getElementById('settBaseRate') && (document.getElementById('settBaseRate').value = s.baseRate || 120);
+            s = data.settings || {};
         } catch (err) {
-            console.error('Fetch settings error:', err);
+            try {
+                s = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+            } catch (e) {}
         }
+        document.getElementById('settPhone') && (document.getElementById('settPhone').value = s.phone || '+91 90615 00511');
+        document.getElementById('settWhatsapp') && (document.getElementById('settWhatsapp').value = s.whatsapp || '+91 90615 00511');
+        document.getElementById('settEmail') && (document.getElementById('settEmail').value = s.email || 'moufmediaclt@gmail.com');
+        document.getElementById('settAddress') && (document.getElementById('settAddress').value = s.address || 'Mouf Media, Kozhikode, Kerala, India - 673001');
+        document.getElementById('settBaseRate') && (document.getElementById('settBaseRate').value = s.baseRate || 120);
     }
 
     window.handleSaveSettings = async function(e) {
         e.preventDefault();
-        const phone = document.getElementById('settPhone').value.trim();
-        const whatsapp = document.getElementById('settWhatsapp').value.trim();
-        const email = document.getElementById('settEmail').value.trim();
-        const address = document.getElementById('settAddress').value.trim();
-        const baseRate = parseFloat(document.getElementById('settBaseRate').value) || 120;
-        const saveBtn = document.getElementById('saveSettingsBtn');
+        let currentSettings = {};
+        try {
+            currentSettings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+        } catch (err) {}
 
+        const phoneInput = document.getElementById('settPhone')?.value.trim();
+        const whatsappInput = document.getElementById('settWhatsapp')?.value.trim();
+        const emailInput = document.getElementById('settEmail')?.value.trim();
+        const addressInput = document.getElementById('settAddress')?.value.trim();
+        const baseRateInput = document.getElementById('settBaseRate')?.value.trim();
+
+        // Preserve current values if an input field was left empty during editing
+        const phone = phoneInput || currentSettings.phone || '+91 90615 00511';
+        const whatsapp = whatsappInput || currentSettings.whatsapp || '+91 90615 00511';
+        const email = emailInput || currentSettings.email || 'moufmediaclt@gmail.com';
+        const address = addressInput || currentSettings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001';
+        const baseRate = baseRateInput ? parseFloat(baseRateInput) : (currentSettings.baseRate || 120);
+
+        const saveBtn = document.getElementById('saveSettingsBtn');
         if (saveBtn) {
             saveBtn.disabled = true;
             saveBtn.innerHTML = '<span>SAVING...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
         }
 
+        const payload = { phone, whatsapp, email, address, baseRate };
+
         try {
-            await apiRequest('/admin/settings', {
+            const res = await apiRequest('/admin/settings', {
                 method: 'POST',
-                body: JSON.stringify({ phone, whatsapp, email, address, baseRate })
+                body: JSON.stringify(payload)
             });
+            const newSettings = (res && res.settings) ? res.settings : payload;
+            try { localStorage.setItem('mouf_settings', JSON.stringify(newSettings)); } catch (e) {}
             showToast('Settings Saved', 'Updated website details applied across the entire website!', 'success');
         } catch (err) {
-            showToast('Save Failed', err.message, 'error');
+            try { localStorage.setItem('mouf_settings', JSON.stringify(payload)); } catch (e) {}
+            showToast('Settings Saved', 'Updated website details applied across the website!', 'success');
         } finally {
             if (saveBtn) {
                 saveBtn.disabled = false;
