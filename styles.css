@@ -3637,6 +3637,7 @@ input, select, textarea {
 .project-modal-backdrop.active {
     display: flex !important;
     opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .project-modal-card {

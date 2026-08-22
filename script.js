@@ -620,7 +620,6 @@ window.handleContactSubmit = async function(e) {
             showSuccessUI();
         } catch (fallbackError) {
             console.error('Contact Submission Fallback Note:', fallbackError);
-            // Since the lead is safely recorded in localStorage admin panel and Google Forms, show positive feedback
             showSuccessUI();
         }
     }
@@ -786,7 +785,10 @@ window.openProjectModal = function(targetOrData, optEvent) {
     }
 
     modal.style.display = 'flex';
-    modal.classList.add('active');
+    modal.style.opacity = '1';
+    requestAnimationFrame(() => {
+        modal.classList.add('active');
+    });
     document.body.style.overflow = 'hidden';
 };
 
@@ -795,6 +797,7 @@ window.closeProjectModal = function(e) {
     const modal = document.getElementById('projectDetailsModal');
     if (modal) {
         modal.classList.remove('active');
+        modal.style.opacity = '0';
         setTimeout(() => {
             if (!modal.classList.contains('active')) {
                 modal.style.display = 'none';
