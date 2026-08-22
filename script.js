@@ -91,6 +91,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.textContent = address;
             });
 
+            // 6. Update Social Media Links
+            const instagramUrl = settings.instagram || 'https://www.instagram.com/moufmedia/';
+            const youtubeUrl = settings.youtube || 'https://www.youtube.com/c/MoufMedia/streams';
+            const facebookUrl = settings.facebook || 'https://www.facebook.com/MouFmedia/';
+
+            document.querySelectorAll('a[aria-label="Instagram"], a[href*="instagram.com"]').forEach(el => {
+                el.href = instagramUrl;
+            });
+            document.querySelectorAll('a[aria-label="YouTube"], a[href*="youtube.com"]').forEach(el => {
+                el.href = youtubeUrl;
+            });
+            document.querySelectorAll('a[aria-label="Facebook"], a[href*="facebook.com"]').forEach(el => {
+                el.href = facebookUrl;
+            });
+
         } catch (e) {
             console.warn('Site settings auto-propagation note:', e);
         }

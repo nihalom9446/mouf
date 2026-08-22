@@ -54,6 +54,9 @@ const DEFAULT_SETTINGS = () => {
         whatsapp: '+91 90615 00511',
         email: 'moufmediaclt@gmail.com',
         address: 'Mouf Media, Kozhikode, Kerala, India - 673001',
+        instagram: 'https://www.instagram.com/moufmedia/',
+        youtube: 'https://www.youtube.com/c/MoufMedia/streams',
+        facebook: 'https://www.facebook.com/MouFmedia/',
         baseRate: 120,
         updatedAt: new Date().toISOString()
     };
@@ -169,6 +172,9 @@ const StorageService = {
             whatsapp: settings.whatsapp || '+91 90615 00511',
             email: settings.email || 'moufmediaclt@gmail.com',
             address: settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001',
+            instagram: settings.instagram || 'https://www.instagram.com/moufmedia/',
+            youtube: settings.youtube || 'https://www.youtube.com/c/MoufMedia/streams',
+            facebook: settings.facebook || 'https://www.facebook.com/MouFmedia/',
             baseRate: settings.baseRate || 120,
             updatedAt: settings.updatedAt || new Date().toISOString()
         };
