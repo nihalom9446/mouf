@@ -15,15 +15,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 0. GLOBAL DYNAMIC SITE SETTINGS PROPAGATION
     // =========================================================================
+    function sanitizePhone(raw, isWhatsapp = false) {
+        if (!raw || typeof raw !== 'string') return isWhatsapp ? '919061500511' : '+91 90615 00511';
+        if (raw.includes('99958') || raw.includes('8089') || raw.includes('9995')) {
+            return isWhatsapp ? '919061500511' : '+91 90615 00511';
+        }
+        if (isWhatsapp) {
+            const digits = raw.replace(/[^0-9]/g, '');
+            return digits.length >= 10 ? digits : '919061500511';
+        }
+        return raw;
+    }
+
     function applyGlobalSiteSettings(settingsData) {
         try {
-            const settings = settingsData || JSON.parse(localStorage.getItem('mouf_settings') || '{}');
-            if (!settings || Object.keys(settings).length === 0) return;
+            let settings = settingsData;
+            if (!settings) {
+                try {
+                    settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+                } catch (e) { settings = {}; }
+            }
 
-            const phone = settings.phone || '+91 90615 00511';
-            const cleanPhone = phone.replace(/[^0-9+]/g, '');
-            const whatsapp = settings.whatsapp || '+91 90615 00511';
-            const cleanWhatsapp = whatsapp.replace(/[^0-9]/g, '');
+            // Purge old cached obsolete settings if present
+            if (settings.whatsapp && (settings.whatsapp.includes('99958') || settings.whatsapp.includes('8089'))) {
+                settings.whatsapp = '+91 90615 00511';
+                settings.phone = '+91 90615 00511';
+                try { localStorage.setItem('mouf_settings', JSON.stringify(settings)); } catch (e) {}
+            }
+
+            const phone = sanitizePhone(settings.phone, false);
+            const cleanPhone = phone.replace(/[^0-9+]/g, '') || '+919061500511';
+            const cleanWhatsapp = sanitizePhone(settings.whatsapp, true);
             const email = settings.email || 'moufmediaclt@gmail.com';
             const address = settings.address || 'Mouf Media, Kozhikode, Kerala, India - 673001';
 
@@ -82,6 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(r => r.json())
         .then(data => {
             if (data && data.success && data.settings) {
+                if (data.settings.whatsapp && (data.settings.whatsapp.includes('99958') || data.settings.whatsapp.includes('8089'))) {
+                    data.settings.whatsapp = '+91 90615 00511';
+                    data.settings.phone = '+91 90615 00511';
+                }
                 localStorage.setItem('mouf_settings', JSON.stringify(data.settings));
                 applyGlobalSiteSettings(data.settings);
             }
@@ -342,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update WhatsApp CTA Quote Link
             if (quoteBtn) {
-                const whatsappPhone = settings.whatsapp ? settings.whatsapp.replace(/[^0-9]/g, '') : '919061500511';
+                const whatsappPhone = sanitizePhone(settings.whatsapp, true);
                 const messageText = encodeURIComponent(
                     `Hi Mouf Media, I calculated an LED Wall estimate on your website:\n` +
                     `• Screen Size: ${sqft} sq.ft (${w > 0 && h > 0 ? `${w}ft x ${h}ft` : 'Custom'})\n` +
@@ -719,8 +745,8 @@ window.openProjectModal = function(targetOrData, optEvent) {
         settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
     } catch (e) {}
 
-    const whatsappNumber = (settings.whatsapp || '+91 90615 00511').replace(/[^0-9]/g, '') || '919061500511';
-    const phoneNumber = (settings.phone || '+91 90615 00511').replace(/[^0-9+]/g, '') || '+919061500511';
+    const whatsappNumber = sanitizePhone(settings.whatsapp, true);
+    const phoneNumber = sanitizePhone(settings.phone, false).replace(/[^0-9+]/g, '') || '+919061500511';
 
     const inquiryText = encodeURIComponent(
         `Hi Mouf Media, I am interested in your project setup:\n\n` +
