@@ -456,10 +456,13 @@ app.post('/api/admin/settings', requireAdminAuth, (req, res) => {
     }
 });
 
-// ------------------------------------------------------------------------------
-// 6. STATIC FILE SERVING
-// ------------------------------------------------------------------------------
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js') || filePath.endsWith('.css') || filePath.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+        }
+    }
+}));
 
 // Fallback route for direct HTML navigation
 app.get('*', (req, res, next) => {
