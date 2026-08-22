@@ -119,12 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(r => r.json())
         .then(data => {
             if (data && data.success && data.settings) {
-                if (data.settings.whatsapp && (data.settings.whatsapp.includes('99958') || data.settings.whatsapp.includes('8089'))) {
-                    data.settings.whatsapp = '+91 90615 00511';
-                    data.settings.phone = '+91 90615 00511';
+                let localSettings = {};
+                try {
+                    localSettings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+                } catch (e) {}
+
+                // Merge server defaults with local user settings so user edits are NEVER undone or overwritten
+                const mergedSettings = { ...data.settings, ...localSettings };
+                if (mergedSettings.whatsapp && (mergedSettings.whatsapp.includes('99958') || mergedSettings.whatsapp.includes('8089'))) {
+                    mergedSettings.whatsapp = '+91 90615 00511';
+                    mergedSettings.phone = '+91 90615 00511';
                 }
-                localStorage.setItem('mouf_settings', JSON.stringify(data.settings));
-                applyGlobalSiteSettings(data.settings);
+                localStorage.setItem('mouf_settings', JSON.stringify(mergedSettings));
+                applyGlobalSiteSettings(mergedSettings);
             }
         })
         .catch(() => {});

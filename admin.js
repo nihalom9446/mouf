@@ -716,20 +716,38 @@
     // 8. SITE SETTINGS CONTROLLER
     // --------------------------------------------------------------------------
     async function fetchSettings() {
-        let s = {};
+        let localSettings = {};
+        try {
+            localSettings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+        } catch (e) {}
+
+        let serverSettings = {};
         try {
             const data = await apiRequest('/admin/settings', { method: 'GET' });
-            s = data.settings || {};
-        } catch (err) {
-            try {
-                s = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
-            } catch (e) {}
-        }
-        document.getElementById('settPhone') && (document.getElementById('settPhone').value = s.phone || '+91 90615 00511');
-        document.getElementById('settWhatsapp') && (document.getElementById('settWhatsapp').value = s.whatsapp || '+91 90615 00511');
-        document.getElementById('settEmail') && (document.getElementById('settEmail').value = s.email || 'moufmediaclt@gmail.com');
-        document.getElementById('settAddress') && (document.getElementById('settAddress').value = s.address || 'Mouf Media, Kozhikode, Kerala, India - 673001');
-        document.getElementById('settBaseRate') && (document.getElementById('settBaseRate').value = s.baseRate || 120);
+            serverSettings = data.settings || {};
+        } catch (err) {}
+
+        // Merge: local custom settings take precedence over server initial defaults
+        const s = {
+            ...serverSettings,
+            ...localSettings
+        };
+
+        const phoneVal = s.phone || '+91 90615 00511';
+        const whatsappVal = s.whatsapp || '+91 90615 00511';
+        const emailVal = s.email || 'moufmediaclt@gmail.com';
+        const addressVal = s.address || 'Mouf Media, Kozhikode, Kerala, India - 673001';
+        const baseRateVal = s.baseRate || 120;
+
+        document.getElementById('settPhone') && (document.getElementById('settPhone').value = phoneVal);
+        document.getElementById('settWhatsapp') && (document.getElementById('settWhatsapp').value = whatsappVal);
+        document.getElementById('settEmail') && (document.getElementById('settEmail').value = emailVal);
+        document.getElementById('settAddress') && (document.getElementById('settAddress').value = addressVal);
+        document.getElementById('settBaseRate') && (document.getElementById('settBaseRate').value = baseRateVal);
+
+        try {
+            localStorage.setItem('mouf_settings', JSON.stringify(s));
+        } catch (e) {}
     }
 
     window.handleSaveSettings = async function(e) {
@@ -758,25 +776,42 @@
             saveBtn.innerHTML = '<span>SAVING...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
         }
 
-        const payload = { phone, whatsapp, email, address, baseRate };
+        const payload = {
+            ...currentSettings,
+            phone,
+            whatsapp,
+            email,
+            address,
+            baseRate,
+            updatedAt: new Date().toISOString()
+        };
 
+        // 1. Immediately write to localStorage so client settings are NEVER undone
         try {
-            const res = await apiRequest('/admin/settings', {
+            localStorage.setItem('mouf_settings', JSON.stringify(payload));
+        } catch (e) {}
+
+        // 2. Push to server API
+        try {
+            await apiRequest('/admin/settings', {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-            const newSettings = (res && res.settings) ? res.settings : payload;
-            try { localStorage.setItem('mouf_settings', JSON.stringify(newSettings)); } catch (e) {}
-            showToast('Settings Saved', 'Updated website details applied across the entire website!', 'success');
-        } catch (err) {
-            try { localStorage.setItem('mouf_settings', JSON.stringify(payload)); } catch (e) {}
-            showToast('Settings Saved', 'Updated website details applied across the website!', 'success');
-        } finally {
-            if (saveBtn) {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save &amp; Apply Everywhere';
-            }
+        } catch (err) {}
+
+        // Re-populate fields with active saved values
+        document.getElementById('settPhone') && (document.getElementById('settPhone').value = phone);
+        document.getElementById('settWhatsapp') && (document.getElementById('settWhatsapp').value = whatsapp);
+        document.getElementById('settEmail') && (document.getElementById('settEmail').value = email);
+        document.getElementById('settAddress') && (document.getElementById('settAddress').value = address);
+        document.getElementById('settBaseRate') && (document.getElementById('settBaseRate').value = baseRate);
+
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save &amp; Apply Everywhere';
         }
+
+        showToast('Settings Saved', 'Updated website details applied across the website!', 'success');
     };
 
     // --------------------------------------------------------------------------
