@@ -641,30 +641,8 @@
         }
 
         try {
-            let finalImageUrl = selectedUploadBase64 || customUrl;
-
-            // If a file was picked, attempt server upload, fallback to base64 data URI for 100% availability
-            if (selectedUploadBase64) {
-                try {
-                    const ext = selectedUploadFile?.name?.split('.').pop() || 'png';
-                    const uploadRes = await apiRequest('/admin/upload', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            base64Data: selectedUploadBase64,
-                            extension: ext
-                        })
-                    });
-                    if (uploadRes && uploadRes.success && uploadRes.url) {
-                        finalImageUrl = uploadRes.url;
-                    }
-                } catch (uploadErr) {
-                    finalImageUrl = selectedUploadBase64;
-                }
-            }
-
-            if (!finalImageUrl) {
-                finalImageUrl = 'images/project_hero_stage.webp';
-            }
+            // Use embedded Base64 data URI for 100% permanent availability across Vercel serverless functions
+            let finalImageUrl = selectedUploadBase64 || customUrl || 'images/project_hero_stage.webp';
 
             const newProjPayload = {
                 title,
