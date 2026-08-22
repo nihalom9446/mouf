@@ -11,22 +11,22 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+function sanitizePhone(raw, isWhatsapp = false) {
+    if (!raw || typeof raw !== 'string') return isWhatsapp ? '919061500511' : '+91 90615 00511';
+    if (raw.includes('99958') || raw.includes('8089') || raw.includes('9995')) {
+        return isWhatsapp ? '919061500511' : '+91 90615 00511';
+    }
+    if (isWhatsapp) {
+        const digits = raw.replace(/[^0-9]/g, '');
+        return digits.length >= 10 ? digits : '919061500511';
+    }
+    return raw;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 0. GLOBAL DYNAMIC SITE SETTINGS PROPAGATION
     // =========================================================================
-    function sanitizePhone(raw, isWhatsapp = false) {
-        if (!raw || typeof raw !== 'string') return isWhatsapp ? '919061500511' : '+91 90615 00511';
-        if (raw.includes('99958') || raw.includes('8089') || raw.includes('9995')) {
-            return isWhatsapp ? '919061500511' : '+91 90615 00511';
-        }
-        if (isWhatsapp) {
-            const digits = raw.replace(/[^0-9]/g, '');
-            return digits.length >= 10 ? digits : '919061500511';
-        }
-        return raw;
-    }
-
     function applyGlobalSiteSettings(settingsData) {
         try {
             let settings = settingsData;
@@ -761,13 +761,12 @@ window.openProjectModal = function(targetOrData, optEvent) {
     }
     if (descEl) descEl.textContent = description;
 
-    let settings = {};
+    let whatsappNumber = '919061500511';
+    let phoneNumber = '+919061500511';
     try {
-        settings = JSON.parse(localStorage.getItem('mouf_settings') || '{}');
+        whatsappNumber = sanitizePhone(settings.whatsapp, true);
+        phoneNumber = sanitizePhone(settings.phone, false).replace(/[^0-9+]/g, '') || '+919061500511';
     } catch (e) {}
-
-    const whatsappNumber = sanitizePhone(settings.whatsapp, true);
-    const phoneNumber = sanitizePhone(settings.phone, false).replace(/[^0-9+]/g, '') || '+919061500511';
 
     const inquiryText = encodeURIComponent(
         `Hi Mouf Media, I am interested in your project setup:\n\n` +
@@ -786,9 +785,7 @@ window.openProjectModal = function(targetOrData, optEvent) {
 
     modal.style.display = 'flex';
     modal.style.opacity = '1';
-    requestAnimationFrame(() => {
-        modal.classList.add('active');
-    });
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 };
 
